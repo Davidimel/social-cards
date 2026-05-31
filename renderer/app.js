@@ -924,6 +924,8 @@ window.renderCards = async function (opts) {
   metaDesc.value = truncate(data.description || '', 160)
   metaSite.value = data.siteName || data.author || ''
   try { metaUrl.value = new URL(opts.url).hostname.replace(/^www\./, '').toUpperCase() } catch { metaUrl.value = '' }
+  if (opts.site) metaSite.value = opts.site
+  if (opts.domain) metaUrl.value = opts.domain.toUpperCase()
   descToggle.checked = opts.showDesc !== false
   siteToggle.checked = opts.showSite !== false
   urlToggle.checked = opts.showUrl !== false

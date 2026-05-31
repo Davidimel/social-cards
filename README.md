@@ -7,7 +7,28 @@ Paste a post URL (or let a Ghost webhook do it) and get clean cards in **8 style
 in both **Instagram Story (1080×1920)** and **Landscape (1920×1080)** sizes. The
 accent color is auto-sampled from your post's featured image.
 
-![Templates: Overlay · Spotlight · Light Card · Dark Card · Paper · Night · Headline · Quote](#)
+<p align="center">
+  <img src="docs/screenshots/hero.jpg" alt="Social Cards — example card" width="100%">
+</p>
+
+### The 8 templates
+
+<table>
+  <tr>
+    <td align="center"><img src="docs/screenshots/overlay.jpg" width="190"><br><sub><b>Overlay</b></sub></td>
+    <td align="center"><img src="docs/screenshots/spotlight.jpg" width="190"><br><sub><b>Spotlight</b></sub></td>
+    <td align="center"><img src="docs/screenshots/light-card.jpg" width="190"><br><sub><b>Light Card</b></sub></td>
+    <td align="center"><img src="docs/screenshots/dark-card.jpg" width="190"><br><sub><b>Dark Card</b></sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="docs/screenshots/paper.jpg" width="190"><br><sub><b>Paper</b></sub></td>
+    <td align="center"><img src="docs/screenshots/night.jpg" width="190"><br><sub><b>Night</b></sub></td>
+    <td align="center"><img src="docs/screenshots/headline.jpg" width="190"><br><sub><b>Headline</b></sub></td>
+    <td align="center"><img src="docs/screenshots/quote.jpg" width="190"><br><sub><b>Quote</b></sub></td>
+  </tr>
+</table>
+
+<sub>Every template also renders in Landscape (1920×1080). The accent color is sampled from each post's featured image.</sub>
 
 ---
 

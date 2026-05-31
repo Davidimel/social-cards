@@ -51,9 +51,11 @@ async function runMakeIcon() {
     if (m) o[m[1]] = m[2]
   }
   const out = o.out || path.join(__dirname, 'build', 'icon_1024.png')
+  const htmlArg = o.html || path.join('renderer', 'icon.html')
+  const htmlPath = path.isAbsolute(htmlArg) ? htmlArg : path.join(__dirname, htmlArg)
   const win = new BrowserWindow({ show: false, width: 1100, height: 1100, webPreferences: { offscreen: true } })
   try {
-    await win.loadFile(path.join(__dirname, 'renderer', 'icon.html'))
+    await win.loadFile(htmlPath)
     const dataUrl = await win.webContents.executeJavaScript('window.__icon()')
     fs.mkdirSync(path.dirname(out), { recursive: true })
     fs.writeFileSync(out, Buffer.from(dataUrl.split(',')[1], 'base64'))
@@ -79,7 +81,9 @@ function parseRenderArgs() {
     formats: o.formats && o.formats !== 'all' ? o.formats.split(',') : 'all',
     showDesc: o.showDesc !== 'false',
     showSite: o.showSite !== 'false',
-    showUrl: o.showUrl !== 'false'
+    showUrl: o.showUrl !== 'false',
+    site: o.site,      // optional: override the publication name
+    domain: o.domain   // optional: override the URL/domain shown on the card
   }
 }
 
