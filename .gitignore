@@ -1,0 +1,21 @@
+# Dependencies & build output
+node_modules/
+dist/
+build/icon_1024.png
+build/icon.iconset/
+
+# Secrets & local config — NEVER commit these
+ghost-integration/.env
+*.env
+!*.env.example
+
+# Logs & generated cards
+ghost-integration/logs/
+*.log
+
+# Cloudflare tunnel credentials (if ever copied into the repo)
+*.pem
+*cloudflared*credentials*.json
+
+# macOS
+.DS_Store

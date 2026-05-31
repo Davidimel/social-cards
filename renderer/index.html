@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Social Cards</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="sidebar">
+    <div class="app-header">
+      <span class="app-icon">✦</span>
+      <span class="app-title">Social Cards</span>
+    </div>
+
+    <div class="section">
+      <label class="section-label">Blog Post URL</label>
+      <div class="url-row">
+        <input type="text" id="url-input" placeholder="https://yourblog.com/post" spellcheck="false" />
+        <button id="fetch-btn" class="btn-primary">Fetch</button>
+      </div>
+      <div id="fetch-status" class="fetch-status"></div>
+    </div>
+
+    <div class="section" id="meta-section" style="display:none">
+      <label class="section-label">Post Info</label>
+      <div class="meta-field">
+        <label>Title</label>
+        <input type="text" id="meta-title" />
+      </div>
+      <div class="meta-field">
+        <label class="field-label-row">
+          <span>Tagline / Quote</span>
+          <span class="toggle">
+            <input type="checkbox" id="desc-toggle" checked />
+            <span class="toggle-text">Show on card</span>
+          </span>
+        </label>
+        <textarea id="meta-desc" rows="3" placeholder="A short excerpt or hook line…"></textarea>
+      </div>
+      <div class="meta-field">
+        <label class="field-label-row">
+          <span>Site / Author</span>
+          <span class="toggle">
+            <input type="checkbox" id="site-toggle" checked />
+            <span class="toggle-text">Show on card</span>
+          </span>
+        </label>
+        <input type="text" id="meta-site" />
+      </div>
+      <div class="meta-field">
+        <label class="field-label-row">
+          <span>Website</span>
+          <span class="toggle">
+            <input type="checkbox" id="url-toggle" checked />
+            <span class="toggle-text">Show on card</span>
+          </span>
+        </label>
+        <input type="text" id="meta-url" placeholder="yourblog.com" spellcheck="false" />
+      </div>
+    </div>
+
+    <div class="section" id="template-section" style="display:none">
+      <label class="section-label">Format</label>
+      <div class="format-toggle" id="format-toggle">
+        <button class="format-btn active" data-format="story">
+          <span class="fmt-name">Story</span>
+          <span class="fmt-dim">1080 × 1920</span>
+        </button>
+        <button class="format-btn" data-format="landscape">
+          <span class="fmt-name">Landscape</span>
+          <span class="fmt-dim">1920 × 1080</span>
+        </button>
+      </div>
+
+      <label class="section-label" style="margin-top:18px">Template</label>
+      <div class="template-grid" id="template-grid"></div>
+    </div>
+
+    <div class="section" id="export-section" style="display:none">
+      <button id="export-btn" class="btn-export">Save as JPG</button>
+      <p class="export-hint" id="export-hint">Instagram Story size — ready to share</p>
+    </div>
+  </div>
+
+  <div class="preview-area">
+    <div class="preview-frame">
+      <canvas id="card-canvas"></canvas>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

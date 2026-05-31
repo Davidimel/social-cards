@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8" /><style>html,body{margin:0;background:transparent}</style></head>
+<body>
+<canvas id="c" width="1024" height="1024"></canvas>
+<script>
+const SANS = `-apple-system, 'SF Pro Text', 'Helvetica Neue', sans-serif`
+
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath()
+  ctx.moveTo(x + r, y)
+  ctx.arcTo(x + w, y, x + w, y + h, r)
+  ctx.arcTo(x + w, y + h, x, y + h, r)
+  ctx.arcTo(x, y + h, x, y, r)
+  ctx.arcTo(x, y, x + w, y, r)
+  ctx.closePath()
+}
+
+function draw() {
+  const c = document.getElementById('c')
+  const ctx = c.getContext('2d')
+  ctx.clearRect(0, 0, 1024, 1024)
+
+  // ── Squircle background (the macOS icon shape) ──
+  const m = 96, s = 1024 - m * 2, r = 230
+  ctx.save()
+  roundRect(ctx, m, m, s, s, r)
+  ctx.clip()
+  const g = ctx.createLinearGradient(m, m, m + s, m + s)
+  g.addColorStop(0, '#D2613F')
+  g.addColorStop(0.55, '#A23A3C')
+  g.addColorStop(1, '#5E2230')
+  ctx.fillStyle = g
+  ctx.fillRect(m, m, s, s)
+  // soft top sheen
+  const sheen = ctx.createLinearGradient(0, m, 0, m + s * 0.6)
+  sheen.addColorStop(0, 'rgba(255,255,255,0.16)')
+  sheen.addColorStop(1, 'rgba(255,255,255,0)')
+  ctx.fillStyle = sheen
+  ctx.fillRect(m, m, s, s)
+  ctx.restore()
+
+  // ── Stacked card motif ──
+  const cx = 512, cy = 522
+  const cw = 392, ch = 496
+
+  // Back card (rotated, darker cream)
+  ctx.save()
+  ctx.translate(cx, cy)
+  ctx.rotate(-7 * Math.PI / 180)
+  ctx.shadowColor = 'rgba(40,15,20,0.35)'
+  ctx.shadowBlur = 48
+  ctx.shadowOffsetY = 18
+  roundRect(ctx, -cw / 2, -ch / 2, cw, ch, 40)
+  ctx.fillStyle = '#E9DAC4'
+  ctx.fill()
+  ctx.restore()
+
+  // Front card (cream)
+  ctx.save()
+  ctx.translate(cx, cy)
+  ctx.shadowColor = 'rgba(40,15,20,0.4)'
+  ctx.shadowBlur = 60
+  ctx.shadowOffsetY = 26
+  roundRect(ctx, -cw / 2, -ch / 2, cw, ch, 40)
+  ctx.fillStyle = '#FBF7EF'
+  ctx.fill()
+  ctx.restore()
+
+  // Card contents (relative to front card top-left)
+  const x = cx - cw / 2, y = cy - ch / 2
+  const pad = 40
+
+  // Image area with its own gradient
+  ctx.save()
+  roundRect(ctx, x + pad, y + pad, cw - pad * 2, 236, 24)
+  ctx.clip()
+  const ig = ctx.createLinearGradient(x + pad, y + pad, x + cw - pad, y + pad + 236)
+  ig.addColorStop(0, '#D2613F')
+  ig.addColorStop(1, '#5E2230')
+  ctx.fillStyle = ig
+  ctx.fillRect(x + pad, y + pad, cw - pad * 2, 236)
+  ctx.restore()
+
+  // Big quotation mark inside the image area
+  ctx.fillStyle = 'rgba(251,247,239,0.92)'
+  ctx.font = `700 230px Georgia, serif`
+  ctx.textBaseline = 'alphabetic'
+  ctx.fillText('“', x + pad + 26, y + pad + 196)
+
+  // Title bars
+  let ty = y + pad + 236 + 56
+  ctx.fillStyle = '#26221F'
+  roundRect(ctx, x + pad, ty, cw - pad * 2, 30, 15); ctx.fill()
+  ty += 50
+  roundRect(ctx, x + pad, ty, (cw - pad * 2) * 0.66, 30, 15); ctx.fill()
+
+  // Accent URL bar
+  ty += 64
+  ctx.fillStyle = '#D2613F'
+  roundRect(ctx, x + pad, ty, (cw - pad * 2) * 0.42, 22, 11); ctx.fill()
+}
+
+draw()
+window.__icon = () => document.getElementById('c').toDataURL('image/png')
+</script>
+</body>
+</html>
