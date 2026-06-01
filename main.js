@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, dialog } = require('electron')
+const { app, BrowserWindow, ipcMain, dialog, shell } = require('electron')
 const path = require('path')
 const fs = require('fs')
 const https = require('https')
@@ -268,6 +268,39 @@ ipcMain.handle('save-card', async (event, dataUrl) => {
   const base64 = dataUrl.replace(/^data:image\/\w+;base64,/, '')
   fs.writeFileSync(filePath, Buffer.from(base64, 'base64'))
   return { success: true, filePath }
+})
+
+// Default save folder (Desktop) for first run
+ipcMain.handle('get-default-folder', () => app.getPath('desktop'))
+
+// Let the user pick a folder to save cards into
+ipcMain.handle('choose-folder', async () => {
+  const { filePaths, canceled } = await dialog.showOpenDialog({
+    title: 'Choose where to save cards',
+    properties: ['openDirectory', 'createDirectory'],
+    buttonLabel: 'Choose'
+  })
+  if (canceled || !filePaths || !filePaths[0]) return null
+  return filePaths[0]
+})
+
+// Save one card straight into a folder (no dialog)
+ipcMain.handle('save-to-folder', async (event, folder, filename, dataUrl) => {
+  try {
+    if (!folder) return { success: false, error: 'No folder set' }
+    fs.mkdirSync(folder, { recursive: true })
+    const base64 = dataUrl.replace(/^data:image\/\w+;base64,/, '')
+    const filePath = path.join(folder, filename)
+    fs.writeFileSync(filePath, Buffer.from(base64, 'base64'))
+    return { success: true, filePath }
+  } catch (e) {
+    return { success: false, error: e.message }
+  }
+})
+
+// Reveal a saved file in Finder
+ipcMain.handle('reveal', (event, filePath) => {
+  if (filePath) shell.showItemInFolder(filePath)
 })
 
 // Fetch image as base64 for canvas rendering

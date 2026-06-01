@@ -52,11 +52,17 @@ const urlToggle = document.getElementById('url-toggle')
 const mainCanvas = document.getElementById('card-canvas')
 const mainCtx = mainCanvas.getContext('2d')
 const exportBtn = document.getElementById('export-btn')
+const exportAllBtn = document.getElementById('export-all-btn')
 const exportHint = document.getElementById('export-hint')
+const savePathEl = document.getElementById('save-path')
+const chooseFolderBtn = document.getElementById('choose-folder')
 const templateGrid = document.getElementById('template-grid')
 const formatToggle = document.getElementById('format-toggle')
 const previewFrame = document.querySelector('.preview-frame')
 const previewArea = document.querySelector('.preview-area')
+
+// Where exported cards are saved (persisted between launches)
+let saveFolder = localStorage.getItem('saveFolder') || null
 
 // ── Init template thumbs ──────────────────────────────────────────
 function buildTemplateThumbs() {
@@ -290,11 +296,69 @@ function renderAll() {
   })
 }
 
-// ── Export ───────────────────────────────────────────────────────
+// ── Save location + export ───────────────────────────────────────
+function slugify(s) {
+  return String(s).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 60) || 'card'
+}
+
+function cardFilename(templateName) {
+  const f = getFields()
+  const tname = templateName.toLowerCase().replace(/\s+/g, '-')
+  return `${slugify(f.title)}-${tname}-${currentFormat}.jpg`
+}
+
+function showSaveFolder(p) {
+  saveFolder = p
+  savePathEl.textContent = p || 'Choose a folder…'
+  savePathEl.title = p || ''
+}
+
+async function initSaveFolder() {
+  if (!saveFolder) {
+    saveFolder = await window.api.getDefaultFolder()  // defaults to Desktop
+    if (saveFolder) localStorage.setItem('saveFolder', saveFolder)
+  }
+  showSaveFolder(saveFolder)
+}
+
+chooseFolderBtn.addEventListener('click', async () => {
+  const picked = await window.api.chooseFolder()
+  if (picked) {
+    localStorage.setItem('saveFolder', picked)
+    showSaveFolder(picked)
+    setStatus('success', 'Save location updated')
+  }
+})
+
+// Save just the current card
 exportBtn.addEventListener('click', async () => {
+  if (!saveFolder) return setStatus('error', 'Choose a save location first')
+  const name = cardFilename(TEMPLATES[currentTemplate].name)
   const dataUrl = mainCanvas.toDataURL('image/jpeg', 0.95)
-  const result = await window.api.saveCard(dataUrl)
-  if (result.success) setStatus('success', `Saved ${result.filePath.split('/').pop()}`)
+  const r = await window.api.saveToFolder(saveFolder, name, dataUrl)
+  if (r.success) setStatus('success', `Saved ${name}`)
+  else setStatus('error', r.error || 'Save failed')
+})
+
+// Save all 8 templates (current format) into the folder
+exportAllBtn.addEventListener('click', async () => {
+  if (!saveFolder) return setStatus('error', 'Choose a save location first')
+  const fields = getFields()
+  const dim = FORMATS[currentFormat]
+  exportAllBtn.disabled = true
+  setStatus('loading', 'Saving all 8 templates…')
+  let saved = 0, lastPath = null
+  for (let i = 0; i < TEMPLATES.length; i++) {
+    const c = document.createElement('canvas')
+    c.width = dim.w
+    c.height = dim.h
+    TEMPLATES[i].draw(c.getContext('2d'), dim.w, dim.h, fields)
+    const r = await window.api.saveToFolder(saveFolder, cardFilename(TEMPLATES[i].name), c.toDataURL('image/jpeg', 0.95))
+    if (r.success) { saved++; lastPath = r.filePath }
+  }
+  exportAllBtn.disabled = false
+  setStatus('success', `Saved ${saved} cards (${currentFormat})`)
+  if (lastPath) window.api.reveal(lastPath)   // pop the folder open in Finder
 })
 
 function setStatus(type, msg) {
@@ -975,3 +1039,4 @@ buildTemplateThumbs()
 applyFormat('story')
 sizePreview()
 renderPlaceholders()
+initSaveFolder()

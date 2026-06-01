@@ -36,7 +36,8 @@ accent color is auto-sampled from your post's featured image.
 
 ### 1. The Mac app (manual)
 An Electron desktop app. Paste a blog URL, pick a template and size, tweak the
-text, and save a JPG.
+text, choose a **save folder**, and export. Save just the current card or
+**all 8 templates at once** straight into your chosen folder.
 
 ```bash
 npm install
@@ -44,7 +45,8 @@ npm start          # run in dev
 npm run dist       # build a native .app (output in dist/)
 ```
 
-Toggle the title / tagline / publication / URL on or off per card.
+- Pick a **Save location** once — it's remembered between launches.
+- Toggle the title / tagline / publication / URL on or off per card.
 
 ### 2. Ghost integration (automatic)
 A small webhook service that listens for Ghost's `post.published` event, renders
